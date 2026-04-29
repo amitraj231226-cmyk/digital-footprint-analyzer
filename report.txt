@@ -1,0 +1,8 @@
+DIGITAL FOOTPRINT REPORT
+==============================
+Target: amitraj231226@gmail.com
+Type: Email
+Risk Score: 80/100
+
+Risks:
+- No uppercase letters
