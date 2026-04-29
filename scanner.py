@@ -1,4 +1,5 @@
 import re
+import requests
 
 
 def detect_type(target):
@@ -25,7 +26,28 @@ def calculate_risk(target):
     return risks
 
 
-def save_report(target, target_type, score, risks):
+def check_username(target):
+    sites = {
+        "GitHub": f"https://github.com/{target}",
+        "Reddit": f"https://www.reddit.com/user/{target}"
+    }
+
+    results = {}
+
+    for site, url in sites.items():
+        try:
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                results[site] = "Found"
+            else:
+                results[site] = "Not Found"
+        except:
+            results[site] = "Error"
+
+    return results
+
+
+def save_report(target, target_type, score, risks, platform_results):
     with open("report.txt", "w") as file:
         file.write("DIGITAL FOOTPRINT REPORT\n")
         file.write("=" * 30 + "\n")
@@ -33,12 +55,9 @@ def save_report(target, target_type, score, risks):
         file.write(f"Type: {target_type}\n")
         file.write(f"Risk Score: {score}/100\n\n")
 
-        if risks:
-            file.write("Risks:\n")
-            for risk in risks:
-                file.write(f"- {risk}\n")
-        else:
-            file.write("No risks detected.\n")
+        file.write("Platform Check:\n")
+        for site, result in platform_results.items():
+            file.write(f"{site}: {result}\n")
 
 
 def analyze(target):
@@ -51,13 +70,15 @@ def analyze(target):
     print(f"\nTarget Type: {target_type}")
     print(f"Risk Score: {score}/100\n")
 
-    if risks:
-        print("Potential Risks:")
-        for risk in risks:
-            print(f"[!] {risk}")
-    else:
-        print("No obvious risks detected.")
+    platform_results = {}
 
-    save_report(target, target_type, score, risks)
+    if target_type == "Username":
+        platform_results = check_username(target)
+
+        print("Platform Presence:")
+        for site, result in platform_results.items():
+            print(f"{site}: {result}")
+
+    save_report(target, target_type, score, risks, platform_results)
 
     print("\nReport saved as report.txt")
