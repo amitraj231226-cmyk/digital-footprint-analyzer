@@ -1,17 +1,44 @@
-def analyze(target):
-    print(f"\nAnalyzing {target}...\n")
+import re
 
+
+def detect_type(target):
+    if "@" in target:
+        return "Email"
+    elif "." in target:
+        return "Domain"
+    else:
+        return "Username"
+
+
+def calculate_risk(target):
     risks = []
 
-    if "@" in target:
-        risks.append("Email format detected")
-
     if len(target) < 8:
-        risks.append("Weak identifier length")
+        risks.append("Target is too short")
 
-    score = 100 - (len(risks) * 20)
+    if target.islower():
+        risks.append("No uppercase characters")
 
-    print("Risk Score:", score)
+    if target.isalpha():
+        risks.append("No numbers or symbols")
 
-    for risk in risks:
-        print("[!] ", risk)
+    return risks
+
+
+def analyze(target):
+    target_type = detect_type(target)
+
+    print(f"\nTarget Type: {target_type}")
+
+    risks = calculate_risk(target)
+
+    score = max(100 - (len(risks) * 20), 0)
+
+    print(f"Risk Score: {score}/100\n")
+
+    if risks:
+        print("Potential Risks Found:")
+        for risk in risks:
+            print(f"[!] {risk}")
+    else:
+        print("No obvious risks detected.")

@@ -1,4 +1,9 @@
 from scanner import analyze
 
-target = input("Enter email/username/domain: ")
+print("=" * 50)
+print("DIGITAL FOOTPRINT ANALYZER V1")
+print("=" * 50)
+
+target = input("\nEnter email / username / domain: ")
+
 analyze(target)
