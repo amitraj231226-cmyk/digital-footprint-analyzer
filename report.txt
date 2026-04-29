@@ -1,7 +1,9 @@
 DIGITAL FOOTPRINT REPORT
 ==============================
-Target: amitraj231226@gmail.com
-Type: Email
+Target: ajit_raj
+Type: Username
 Risk Score: 80/100
 
 Platform Check:
+GitHub: Not Found
+Reddit: Found

@@ -46,6 +46,30 @@ def check_username(target):
 
     return results
 
+def check_security_headers(domain):
+    headers_to_check = [
+        "Content-Security-Policy",
+        "X-Frame-Options",
+        "Strict-Transport-Security",
+        "X-Content-Type-Options"
+    ]
+
+    results = {}
+
+    try:
+        response = requests.get(f"https://{domain}", timeout=5)
+
+        for header in headers_to_check:
+            if header in response.headers:
+                results[header] = "Present"
+            else:
+                results[header] = "Missing"
+
+    except:
+        results["Error"] = "Could not analyze domain"
+
+    return results
+
 
 def save_report(target, target_type, score, risks, platform_results):
     with open("report.txt", "w") as file:
@@ -78,6 +102,13 @@ def analyze(target):
         print("Platform Presence:")
         for site, result in platform_results.items():
             print(f"{site}: {result}")
+
+    elif target_type == "Domain":
+        platform_results = check_security_headers(target)
+
+        print("Security Headers:")
+        for header, result in platform_results.items():
+            print(f"{header}: {result}")
 
     save_report(target, target_type, score, risks, platform_results)
 
